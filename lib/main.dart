@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_complete_guide/answer.dart';
-import 'package:flutter_complete_guide/question.dart';
+import 'package:flutter_complete_guide/quiz.dart';
+import 'package:flutter_complete_guide/result.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,45 +27,61 @@ class AppBody extends StatefulWidget {
 }
 
 class _AppBodyState extends State<AppBody> {
-  var questionNo = 0;
-  var questionList = [
+  var _questionNo = 0;
+  // ignore: unused_field
+  var _totalScore = 0;
+  var _questionList = [
     {
       'questionText': 'What is your name?',
-      'answer': ['Akhil', 'Athira', 'Sandhya', 'Jayaprakash'],
+      'answer': [
+        {'text': 'Akhil', 'score': 10},
+        {'text': 'Athira', 'score': 5},
+        {'text': 'Jayaprakash', 'score': 2},
+        {'text': 'Sandhya', 'score': 1}
+      ],
     },
     {
       'questionText': 'What is your age?',
-      'answer': ['18', '19', '20', '21'],
+      'answer': [
+        {'text': '18', 'score': 1},
+        {'text': '19', 'score': 5},
+        {'text': '20', 'score': 10},
+        {'text': '21', 'score': 2}
+      ],
     },
     {
       'questionText': 'What\'s your fav colour?',
-      'answer': ['Black', 'Blue', 'Green', 'Red'],
+      'answer': [
+        {'text': 'Black', 'score': 10},
+        {'text': 'Blue', 'score': 5},
+        {'text': 'Green', 'score': 2},
+        {'text': 'Red', 'score': 1}
+      ],
     },
   ];
-  void questionUpdate() {
+  void _questionUpdate(int score) {
+    _totalScore += score;
+
     setState(() {
-      questionNo++;
+      _questionNo++;
+    });
+  }
+
+  void _resetQuizFun() {
+    setState(() {
+      _totalScore = 0;
+      _questionNo = 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return questionNo < questionList.length
-        ? Column(
-            children: [
-              Question(
-                questionList[questionNo]['questionText'],
-              ),
-              ...(questionList[questionNo]['answer'] as List<String>)
-                  .map((answer) {
-                return Answer(questionUpdate, answer);
-              }).toList()
-            ],
+    return _questionNo < _questionList.length
+        ? Quiz(
+            questionList: _questionList,
+            questionNo: _questionNo,
+            questionUpdate: _questionUpdate,
           )
-        : Center(
-            child: Text(
-              'You did it',
-            ),
-          );
+        : Result(_totalScore, _resetQuizFun);
   }
 }
